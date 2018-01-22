@@ -1,2 +1,12 @@
-Visit the SIGAR Wiki for documentation, bugs, support, etc.:
-http://sigar.hyperic.com/
+
+System Information Gatherer And Reporter. Fork of https://github.com/hyperic/sigar.
+
+Fixed:
+
+* sigfaulted logger, #28
+* bug undefined symbol: sigar_skip_token, #60
+* bug detection boot_time on linux (now it works like gnu ps, and fix some issues with process start_time)
+
+Installation:
+
+    $ gem install kostya-sigar
