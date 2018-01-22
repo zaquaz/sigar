@@ -124,32 +124,11 @@ sigar_pid_t sigar_pid_get(sigar_t *sigar)
 
 static int sigar_boot_time_get(sigar_t *sigar)
 {
-    FILE *fp;
-    char buffer[BUFSIZ], *ptr;
-    int found = 0;
-
-    if (!(fp = fopen(PROC_STAT, "r"))) {
-        return errno;
-    }
-
-    while ((ptr = fgets(buffer, sizeof(buffer), fp))) {
-        if (strnEQ(ptr, "btime", 5)) {
-            if ((ptr = sigar_skip_token(ptr))) {
-                sigar->boot_time = sigar_strtoul(ptr);
-                found = 1;
-            }
-            break;
-        }
-    }
-
-    fclose(fp);
-
-    if (!found) {
-        /* should never happen */
-        sigar->boot_time = time(NULL);
-    }
-
-    return SIGAR_OK;
+    unsigned long seconds_since_1970 = time(NULL);
+    sigar_uptime_t seconds_since_boot;
+    int status = sigar_uptime_get(sigar, &seconds_since_boot);
+    sigar->boot_time = seconds_since_1970 - (unsigned long)seconds_since_boot.uptime;
+    return status;
 }
 
 int sigar_os_open(sigar_t **sigar)
