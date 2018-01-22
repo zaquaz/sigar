@@ -70,6 +70,7 @@ end
 osdir = "../../src/os/#{os}"
 $CPPFLAGS += ' -I../../include' + ' -I' + osdir
 $CPPFLAGS += ' -U_FILE_OFFSET_BITS' unless is_win32
+$CPPFLAGS += ' -fgnu89-inline'
 
 if RUBY_VERSION > '1.8.4'
   $CPPFLAGS += ' -DRB_HAS_RE_ERROR'
