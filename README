@@ -3,9 +3,9 @@ System Information Gatherer And Reporter. Fork of https://github.com/hyperic/sig
 
 Fixed:
 
-* sigfaulted logger, #28 (c2a1af3c25fc00cf302d0eb98da0d7448f2e891f)
-* bug undefined symbol: sigar_skip_token, #60 (dfe8fece170a1528debe9d2d1008a314642ed218)
-* bug detection boot_time on linux (now it works like gnu ps, and fix some issues with process start_time) (660259e57285482c444efb9084f2da177f52861c)
+* sigfaulted logger, #28 ([c2a1af](https://github.com/kostya/sigar/commit/c2a1af))
+* bug undefined symbol: sigar_skip_token, #60 ([dfe8fe](https://github.com/kostya/sigar/commit/dfe8fe))
+* bug detection boot_time on linux (now it works like gnu ps, and fix some issues with process start_time) ([660259](https://github.com/kostya/sigar/commit/660259))
 
 Installation:
 
