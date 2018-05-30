@@ -1,6 +1,6 @@
 # System Information Gatherer And Reporter. 
 
-Fork of hyperic/sigar with some fixes.
+Fork of hyperic/sigar with some fixes. Support only ruby binding.
 
 ## Fixed:
 
