@@ -8,6 +8,7 @@ Fork of hyperic/sigar with some fixes.
 * bug undefined symbol: sigar_skip_token, [#60](https://github.com/hyperic/sigar/pull/60)([commit](https://github.com/kostya/sigar/commit/dfe8fe))
 * bug detection boot_time on linux (now it works like gnu ps, and fix some issues with process start_time) ([commit](https://github.com/kostya/sigar/commit/660259))
 * FreeBSD: don't use v_cache_min/max [#68](https://github.com/hyperic/sigar/pull/68)([commit](https://github.com/kostya/sigar/commit/800076db97bcacb1ba90805d740b4f9a5a1d3cca))
+* Remove obsolete rpc usage (fix compilation fail with glibc 2.27) ([commit](https://github.com/kostya/sigar/commit/a971b9e8e1443fdf236c5ffa199c1994c05fcd4b))
 
 
 ## Installation:
