@@ -30,7 +30,7 @@ spec = Gem::Specification.new do |s|
   s.has_rdoc = false
   s.extensions = 'bindings/ruby/extconf.rb'
   s.files =
-    %w(LICENSE NOTICE README Rakefile version.properties) +
+    %w(LICENSE NOTICE README.md Rakefile version.properties) +
     %w(bindings/SigarWrapper.pm bindings/SigarBuild.pm) +
     `git ls-files -- bindings/ruby/*.*`.split("\n") +
     Dir.glob("include/*.h") +
