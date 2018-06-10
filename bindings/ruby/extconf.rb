@@ -49,6 +49,9 @@ when /mswin|mingw|cygwin|bccwin/
   have_library("version")
 when /linux/
   os = 'linux'
+  if have_header("sys/sysmacros.h")
+    $CPPFLAGS += ' -DLINUX_SYSMACROS'
+  end
 when /solaris|sun/
   os = 'solaris'
   have_library("nsl")

@@ -30,6 +30,10 @@
 #include "sigar_util.h"
 #include "sigar_os.h"
 
+#ifdef LINUX_SYSMACROS // added by extconf.rb
+    #include <sys/sysmacros.h>
+#endif
+
 #define pageshift(x) ((x) << sigar->pagesize)
 
 #define PROC_MEMINFO PROC_FS_ROOT "meminfo"
