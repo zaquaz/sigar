@@ -13,10 +13,10 @@ Fork of hyperic/sigar with some fixes. Support only ruby binding.
 * FreeBSD: don't use v_cache_min/max [#68](https://github.com/hyperic/sigar/pull/68)([commit](https://github.com/kostya/sigar/commit/800076db97bcacb1ba90805d740b4f9a5a1d3cca))
 
 [2.0.2]
-* Remove obsolete rpc usage (fix compilation fail with glibc 2.27) ([commit](https://github.com/kostya/sigar/commit/a971b9e8e1443fdf236c5ffa199c1994c05fcd4b))
+* Remove obsolete rpc usage (fix compilation fail with glibc 2.27) [#213](https://github.com/kostya/eye/issues/213)([commit](https://github.com/kostya/sigar/commit/a971b9e8e1443fdf236c5ffa199c1994c05fcd4b))
 
 [2.0.4]
-* fix compilation with glibc 2.26, major/minor functions ([commit](https://github.com/kostya/sigar/commit/a2c67588d0f686e0007dadcaf0e4bbb35c0e1e83))
+* fix compilation with glibc 2.26, major/minor functions [#2](https://github.com/kostya/sigar/issues/2)([commit](https://github.com/kostya/sigar/commit/a2c67588d0f686e0007dadcaf0e4bbb35c0e1e83))
 
 
 ## Installation:
