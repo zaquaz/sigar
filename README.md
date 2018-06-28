@@ -15,7 +15,7 @@ Fork of hyperic/sigar with some fixes. Support only ruby binding.
 [2.0.2]
 * Remove obsolete rpc usage (fix compilation fail with glibc 2.27) [#213](https://github.com/kostya/eye/issues/213)([commit](https://github.com/kostya/sigar/commit/a971b9e8e1443fdf236c5ffa199c1994c05fcd4b))
 
-[2.0.4]
+### [2.0.4] 10-06-2018
 * fix compilation with glibc 2.26, major/minor functions [#2](https://github.com/kostya/sigar/issues/2)([commit](https://github.com/kostya/sigar/commit/a2c67588d0f686e0007dadcaf0e4bbb35c0e1e83))
 
 
