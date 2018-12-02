@@ -18,6 +18,9 @@ Fork of hyperic/sigar with some fixes. Support only ruby binding. Part of [Eye g
 ### [2.0.4] 10-06-2018
 * fix compilation with glibc 2.26, major/minor functions [#2](https://github.com/kostya/sigar/issues/2)([commit](https://github.com/kostya/sigar/commit/a2c67588d0f686e0007dadcaf0e4bbb35c0e1e83))
 
+### [2.0.5] 02-12-2018
+* Fix compilation with musl libc [#4](https://github.com/kostya/sigar/pull/4)([commit](https://github.com/kostya/sigar/pull/4/commits/cd07923dd2ed34aca353dfd182f2f85c13853fd9))
+
 
 ## Installation:
 
