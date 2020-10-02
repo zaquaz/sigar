@@ -4,7 +4,7 @@
 
 Gem::Specification.new do |s|
   s.name = "kostya-sigar"
-  s.version = "2.0.2"
+  s.version = "2.0.7"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
