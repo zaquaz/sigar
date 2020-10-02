@@ -24,6 +24,7 @@
 #endif
 
 #include <errno.h>
+#include <ctype.h>
 #include "sigar.h"
 #include "sigar_fileinfo.h"
 #include "sigar_format.h"
