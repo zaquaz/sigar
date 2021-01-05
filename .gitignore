@@ -39,3 +39,5 @@ config.sub*
 config.guess*
 bindings/java/${dist}
 bindings/python/build
+TODO*
+check*.rb
