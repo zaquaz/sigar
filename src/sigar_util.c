@@ -31,7 +31,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
-SIGAR_INLINE char *sigar_uitoa(char *buf, unsigned int n, int *len)
+char *sigar_uitoa(char *buf, unsigned int n, int *len)
 {
     char *start = buf + UITOA_BUFFER_SIZE - 1;
 
@@ -46,7 +46,7 @@ SIGAR_INLINE char *sigar_uitoa(char *buf, unsigned int n, int *len)
     return start;
 }
 
-SIGAR_INLINE char *sigar_skip_line(char *buffer, int buflen)
+char *sigar_skip_line(char *buffer, int buflen)
 {
     char *ptr = buflen ?
         (char *)memchr(buffer, '\n', buflen) : /* bleh */
@@ -54,14 +54,14 @@ SIGAR_INLINE char *sigar_skip_line(char *buffer, int buflen)
     return ++ptr;
 }
 
-SIGAR_INLINE char *sigar_skip_token(char *p)
+char *sigar_skip_token(char *p)
 {
     while (sigar_isspace(*p)) p++;
     while (*p && !sigar_isspace(*p)) p++;
     return p;
 }
 
-SIGAR_INLINE char *sigar_skip_multiple_token(char *p, int count)
+char *sigar_skip_multiple_token(char *p, int count)
 {
     int i;
     
@@ -739,9 +739,6 @@ int sigar_cpu_mhz_from_model(char *model)
 
 #if !defined(WIN32) && !defined(NETWARE)
 #include <netdb.h>
-#include <rpc/rpc.h>
-#include <rpc/pmap_prot.h>
-#include <rpc/pmap_clnt.h>
 #ifdef SIGAR_HPUX
 #include <nfs/nfs.h>
 #endif
@@ -749,84 +746,10 @@ int sigar_cpu_mhz_from_model(char *model)
 #include <arpa/inet.h>
 #endif
 #if defined(__sun) || defined(SIGAR_HPUX)
-#include <rpc/clnt_soc.h>
 #endif
 #if defined(_AIX) || defined(SIGAR_HPUX) || defined(__OpenBSD__) || defined(__NetBSD__)
 #include <sys/socket.h>
 #endif
-
-static enum clnt_stat get_sockaddr(struct sockaddr_in *addr, char *host)
-{
-    register struct hostent *hp;
-    sigar_hostent_t data;
-
-    memset(addr, 0, sizeof(struct sockaddr_in));
-    addr->sin_family = AF_INET;
-
-    if ((addr->sin_addr.s_addr = inet_addr(host)) == -1) {
-        if (!(hp = sigar_gethostbyname(host, &data))) {
-            return RPC_UNKNOWNHOST;
-        }
-        memcpy(&addr->sin_addr, hp->h_addr, hp->h_length);
-    }
-
-    return RPC_SUCCESS;
-}
-
-char *sigar_rpc_strerror(int err)
-{
-    return (char *)clnt_sperrno(err);
-}
-
-SIGAR_DECLARE(int) sigar_rpc_ping(char *host,
-                                  int protocol,
-                                  unsigned long program,
-                                  unsigned long version)
-{
-    CLIENT *client;
-    struct sockaddr_in addr;
-    int sock;
-    struct timeval timeout;
-    unsigned short port = 0;
-    enum clnt_stat rpc_stat; 
-
-    rpc_stat = get_sockaddr(&addr, host);
-    if (rpc_stat != RPC_SUCCESS) {
-        return rpc_stat;
-    }
-
-    timeout.tv_sec = 2;
-    timeout.tv_usec = 0;
-    addr.sin_port = htons(port);
-    sock = RPC_ANYSOCK;
-    
-    if (protocol == SIGAR_NETCONN_UDP) {
-        client =
-            clntudp_create(&addr, program, version,
-                           timeout, &sock);
-    }
-    else if (protocol == SIGAR_NETCONN_TCP) {
-        client =
-            clnttcp_create(&addr, program, version,
-                           &sock, 0, 0);
-    }
-    else {
-        return RPC_UNKNOWNPROTO;
-    }
-
-    if (!client) {
-        return rpc_createerr.cf_stat;
-    }
-
-    timeout.tv_sec = 10;
-    timeout.tv_usec = 0;
-    rpc_stat = clnt_call(client, NULLPROC, (xdrproc_t)xdr_void, NULL,
-                         (xdrproc_t)xdr_void, NULL, timeout);
-
-    clnt_destroy(client);
-
-    return rpc_stat;
-}
 #endif
 
 int sigar_file2str(const char *fname, char *buffer, int buflen)

@@ -219,7 +219,6 @@
       </fileset>
     </chmod>
   </target>
-
   <target name="jni-compile" if="jni.libarch">
     <antcall target="${jni.cc}" inheritRefs="true"/>
   </target>
@@ -296,7 +295,7 @@
         <compilerarg value="-g" if="jni.debug"/>
         <compilerarg value="-Wall"/>
         <compilerarg value="-Werror" if="jni.werror"/>
-        <compilerarg value="-m64" if="jni.arch64"/>
+        <compilerarg value="" if="jni.arch64"/>
         <defineset>
           <define name="${jni.define.name}_SOLARIS"/>
           <define name="_REENTRANT"/>
@@ -323,7 +322,8 @@
       <compiler name="gcc" debug="${jni.debug}" if="linux">
         <compilerarg value="-O2" if="jni.optim"/>
         <compilerarg value="-g" if="jni.debug"/>
-        <compilerarg value="-Wall"/>
+	<compilerarg value="-Wall"/>
+	<compilerarg value="-fgnu89-inline"/>
         <compilerarg value="-Werror" if="jni.werror"/>
         <compilerarg value="${jni.gccm}" if="jni.gccm"/>
         <defineset>
@@ -494,8 +494,8 @@
       <!-- C sources -->
       <fileset dir="${jni.source.dir}">
          <patternset refid="jni.source.files"/>
+         <exclude name="src/sigar_version_autoconf.c"/>
       </fileset>
-
       <includepath>
         <path refid="jni.include.dirs"/>
       </includepath>
