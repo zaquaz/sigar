@@ -1,8 +1,9 @@
 # System Information Gatherer And Reporter. 
 
-Fork of hyperic/sigar with some fixes. Support only ruby binding. Part of [Eye gem](https://github.com/kostya/eye).
+Fork of hyperic/sigar with fixes merged from kostya/sigar, with additional
+added fixes to the Java binding, and compilation for Linux/ARM64 sigar library
 
-## Fixed:
+# Fixed:
 
 ### [2.0.8] 02-10-2020
 * Fix compilation on MacOS [#8](https://github.com/kostya/sigar/issues/8)([commit](https://github.com/kostya/sigar/pull/9/commits/ad39547629fa328e115f7d7bc3c7c358247d1961))
@@ -26,8 +27,3 @@ Fork of hyperic/sigar with some fixes. Support only ruby binding. Part of [Eye g
 * sigfaulted logger, [#28](https://github.com/hyperic/sigar/pull/28)([commit](https://github.com/kostya/sigar/commit/c2a1af))
 * bug undefined symbol: sigar_skip_token, [#60](https://github.com/hyperic/sigar/pull/60)([commit](https://github.com/kostya/sigar/commit/dfe8fe))
 * bug detection boot_time on linux (now it works like gnu ps, and fix some issues with process start_time) ([commit](https://github.com/kostya/sigar/commit/660259))
-
-
-## Installation:
-
-    $ gem install kostya-sigar

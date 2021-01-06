@@ -24,9 +24,9 @@
 #endif
 
 #include <errno.h>
-#include <ctype.h>
 #include "sigar.h"
 #include "sigar_fileinfo.h"
+#include "sigar_log.h"
 #include "sigar_format.h"
 #include "sigar_ptql.h"
 
@@ -57,6 +57,7 @@
 
 typedef struct {
     sigar_t *sigar;
+    VALUE logger;
 } rb_sigar_t;
 
 static rb_sigar_t *rb_sigar_get(VALUE obj)
@@ -154,6 +155,7 @@ static void rb_sigar_close(rb_sigar_t *rbsigar)
 
 static void rb_sigar_mark(rb_sigar_t *rbsigar)
 {
+    rb_gc_mark(rbsigar->logger);
 }
 
 static VALUE rb_sigar_new(VALUE module)
@@ -635,6 +637,93 @@ static VALUE rb_sigar_proc_env(VALUE obj, VALUE pid)
 
 VALUE rb = Qnil;
 
+static const char *logger_consts[] = {
+    "FATAL", /* SIGAR_LOG_FATAL */
+    "ERROR", /* SIGAR_LOG_ERROR */
+    "WARN",  /* SIGAR_LOG_WARN */
+    "INFO",  /* SIGAR_LOG_INFO */
+    "DEBUG", /* SIGAR_LOG_DEBUG */
+    "DEBUG", /* SIGAR_LOG_TRACE */
+};
+
+static void rb_sigar_logger_impl(sigar_t *sigar, void *data,
+                            int level, char *message)
+{
+    rb_sigar_t *rbsigar = ((rb_sigar_t*)data);
+    VALUE logger = rbsigar->logger;
+
+    /* XXX: cost of this, better way? */
+    VALUE logger_const = rb_const_get(rb_cObject, rb_intern("Logger"));
+    VALUE logger_level = rb_const_get(logger_const, 
+                                          rb_intern(logger_consts[level]));
+    VALUE msg = rb_str_new2(message);
+
+    rb_funcall(logger, rb_intern ("add"), 2, logger_level, msg);
+
+    return;
+}
+
+static void rb_sigar_proc_impl(sigar_t *sigar, void *data,
+                            int level, char *message)
+{
+    rb_sigar_t *rbsigar = ((rb_sigar_t*)data);
+    VALUE logger = rbsigar->logger;
+
+    rb_funcall(logger, rb_intern("call"), 2, INT2FIX(level), rb_str_new2(message));
+
+    return;
+}
+
+static VALUE rb_sigar_logger(VALUE obj)
+{
+  rb_sigar_t *rbsigar = rb_sigar_get(obj);
+
+  return rbsigar->logger;
+}
+
+static VALUE rb_sigar_set_logger(VALUE obj, VALUE logger)
+{
+    SIGAR_GET;
+
+    if (rb_obj_is_kind_of(logger, rb_cProc) || 
+        rb_respond_to(logger, rb_intern("call"))) {
+
+        sigar_log_impl_set(sigar, rbsigar, rb_sigar_proc_impl);
+        rbsigar->logger = logger;
+
+        return obj;
+    } 
+
+    /* Have to load Logger to test for it properly */
+    rb_require("logger");
+    if (rb_obj_is_kind_of(logger, rb_path2class("Logger"))) {
+        sigar_log_impl_set(sigar, rbsigar, rb_sigar_logger_impl);
+        rbsigar->logger = logger;
+    }
+    else {
+        rb_raise(rb_eArgError, 
+                 "value is not a proc object or subclass of Logger");
+    }
+
+    return obj;
+}
+
+static VALUE rb_sigar_log_level(VALUE obj)
+{
+    SIGAR_GET;
+
+    return INT2FIX(sigar_log_level_get(sigar));
+}
+
+static VALUE rb_sigar_set_log_level(VALUE obj, VALUE level)
+{
+    SIGAR_GET;
+
+    sigar_log_level_set(sigar, NUM2INT(level));
+
+    return obj;
+}
+
 static VALUE rb_sigar_fqdn(VALUE obj)
 {
     SIGAR_GET;
@@ -734,6 +823,13 @@ static void Init_rbsigar_constants(VALUE rclass)
     RB_SIGAR_CONST_INT(RTF_HOST);
 
     RB_SIGAR_CONST_STR(NULL_HWADDR);
+
+    RB_SIGAR_CONST_INT(LOG_FATAL);
+    RB_SIGAR_CONST_INT(LOG_ERROR);
+    RB_SIGAR_CONST_INT(LOG_WARN);
+    RB_SIGAR_CONST_INT(LOG_INFO);
+    RB_SIGAR_CONST_INT(LOG_DEBUG);
+    RB_SIGAR_CONST_INT(LOG_TRACE);
 }
 
 static void Init_rbsigar_version(VALUE rclass)
@@ -747,6 +843,12 @@ static void Init_rbsigar_version(VALUE rclass)
 void Init_sigar(void)
 {
     VALUE rclass = rb_define_class("Sigar", rb_cObject);
+
+    rb_define_method(rclass, "logger", rb_sigar_logger, 0);
+    rb_define_method(rclass, "logger=", rb_sigar_set_logger, 1);
+
+    rb_define_method(rclass, "log_level", rb_sigar_log_level, 0);
+    rb_define_method(rclass, "log_level=", rb_sigar_set_log_level, 1);
 
     rb_define_method(rclass, "cpu_info_list", rb_sigar_cpu_info_list, 0);
     rb_define_method(rclass, "cpu_list", rb_sigar_cpu_list, 0);

@@ -24,15 +24,12 @@
 #include <sys/stat.h>
 #include <sys/times.h>
 #include <sys/utsname.h>
+#include <sys/sysmacros.h>
 
 #include "sigar.h"
 #include "sigar_private.h"
 #include "sigar_util.h"
 #include "sigar_os.h"
-
-#ifdef LINUX_SYSMACROS // added by extconf.rb
-    #include <sys/sysmacros.h>
-#endif
 
 #define pageshift(x) ((x) << sigar->pagesize)
 
@@ -49,11 +46,6 @@
 #define SYS_BLOCK "/sys/block"
 #define PROC_PARTITIONS PROC_FS_ROOT "partitions"
 #define PROC_DISKSTATS  PROC_FS_ROOT "diskstats"
-
-#ifndef HZ
-#define HZ 100
-#endif
-
 /*
  * /proc/self/stat fields:
  * 1 - pid
@@ -132,11 +124,32 @@ sigar_pid_t sigar_pid_get(sigar_t *sigar)
 
 static int sigar_boot_time_get(sigar_t *sigar)
 {
-    unsigned long seconds_since_1970 = time(NULL);
-    sigar_uptime_t seconds_since_boot;
-    int status = sigar_uptime_get(sigar, &seconds_since_boot);
-    sigar->boot_time = seconds_since_1970 - (unsigned long)seconds_since_boot.uptime;
-    return status;
+    FILE *fp;
+    char buffer[BUFSIZ], *ptr;
+    int found = 0;
+
+    if (!(fp = fopen(PROC_STAT, "r"))) {
+        return errno;
+    }
+
+    while ((ptr = fgets(buffer, sizeof(buffer), fp))) {
+        if (strnEQ(ptr, "btime", 5)) {
+            if ((ptr = sigar_skip_token(ptr))) {
+                sigar->boot_time = sigar_strtoul(ptr);
+                found = 1;
+            }
+            break;
+        }
+    }
+
+    fclose(fp);
+
+    if (!found) {
+        /* should never happen */
+        sigar->boot_time = time(NULL);
+    }
+
+    return SIGAR_OK;
 }
 
 int sigar_os_open(sigar_t **sigar)
