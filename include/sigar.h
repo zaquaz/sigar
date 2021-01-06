@@ -549,6 +549,9 @@ SIGAR_DECLARE(int) sigar_disk_usage_get(sigar_t *sigar,
                                         const char *name,
                                         sigar_disk_usage_t *disk);
 
+SIGAR_DECLARE(int)
+sigar_file_system_ping(sigar_t *sigar,
+                       sigar_file_system_t *fs);
 
 typedef struct {
     enum {
@@ -964,6 +967,13 @@ SIGAR_DECLARE(int) sigar_sys_info_get(sigar_t *sigar, sigar_sys_info_t *sysinfo)
 #define SIGAR_FQDN_LEN 512
 
 SIGAR_DECLARE(int) sigar_fqdn_get(sigar_t *sigar, char *name, int namelen);
+
+SIGAR_DECLARE(int) sigar_rpc_ping(char *hostname,
+                                  int protocol,
+                                  unsigned long program,
+                                  unsigned long version);
+
+SIGAR_DECLARE(char *) sigar_rpc_strerror(int err);
 
 SIGAR_DECLARE(char *) sigar_password_get(const char *prompt);
 
